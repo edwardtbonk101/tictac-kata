@@ -15,127 +15,142 @@ class Game
 		@squares = []
 	end
 
-	def square_marked(x,y,v)
-		cell = Cell.new(x,y,v)
-		 @squares << cell
+	def square_marked_modify(x_coord, y_coord, value, position)
+		cell = Cell.new(x_coord, y_coord, value)
+		@squares[position] = cell
+	end
+
+	def square_marked_new_game(x_coord, y_coord, value)
+		cell = Cell.new(x_coord,y_coord,value)
+		@squares << cell
+	end
+
+	def new_game
+		counter = 1
+		(-1..1).each do |i|
+			(-1..1).each do |j|
+				square_marked_new_game(j, (i * -1), counter.to_s)  
+				counter += 1
+			end
+		end
+	end
+
+	def win?
+		test_vertical_win? || test_horizontal_win? || test_diagonal_win?
 	end
 
 	def test_vertical_win?
-		col1_x = 0
-		col2_x = 0
-		col3_x = 0
-		col1_o = 0
-		col2_o = 0
-		col3_o = 0
-
-		squares.each do |cell| 
-			if lane1(cell.y) && state_o?(cell.value)
-				col1_o += 1
-			end
-			if lane1(cell.y) && state_x?(cell.value)
-				col1_x += 1
-			end
-			if lane2(cell.y) && state_o?(cell.value)
-				col2_o += 1
-			end
-			if lane2(cell.y) && state_x?(cell.value)
-				col2_x += 1
-			end
-			if lane3(cell.y) && state_o?(cell.value)
-				col3_o += 1
-			end
-			if lane3(cell.y) && state_x?(cell.value)
-				col3_x += 1
-			end
-		end
-		if col1_x == 3 || col2_x == 3 || col3_x == 3
-			return true
-		elsif col1_o == 3 || col2_o == 3 || col3_o == 3
-			return true
-		else
-			false
-		end 
+		test_win(0,3,6) || test_win(1,4,7) || test_win(2,5,8)
 	end
 
 	def test_horizontal_win?
-		col1_x = 0
-		col2_x = 0
-		col3_x = 0
-		col1_o = 0
-		col2_o = 0
-		col3_o = 0
-
-		squares.each do |cell| 
-			if lane1(cell.x) && state_o?(cell.value)
-				col1_o += 1
-			end
-			if lane1(cell.x) && state_x?(cell.value)
-				col1_x += 1
-			end
-			if lane2(cell.x) && state_o?(cell.value)
-				col2_o += 1
-			end
-			if lane2(cell.x) && state_x?(cell.value)
-				col2_x += 1
-			end
-			if lane3(cell.x) && state_o?(cell.value)
-				col3_o += 1
-			end
-			if lane3(cell.x) && state_x?(cell.value)
-				col3_x += 1
-			end
-		end
-		if col1_x == 3 || col2_x == 3 || col3_x == 3
-			return true
-		elsif col1_o == 3 || col2_o == 3 || col3_o == 3
-			return true
-		else
-			false
-		end
+		test_win(0,1,2) || test_win(3,4,5) || test_win(6,7,8)
 	end
 
 	def test_diagonal_win?
-		total_x = 0
-		total_o = 0
-		squares.each do |cell|
-			if diagonal_square?(cell.x, cell.y) && state_o?(cell.value)
-				total_o += 1
-			end
-			if diagonal_square?(cell.x, cell.y) && state_x?(cell.value)
-				total_x += 1
-			end
+		test_win(0,4,8) || test_win(2,4,6)
+	end
+
+	def we_have_a_winner
+		puts "You win!"
+		exit
+	end
+
+	def draw
+		puts "It's a draw!"
+		exit
+	end
+
+	def test_win(cell1,cell2,cell3)
+		c1_and_c2?(cell1, cell2) && c2_and_c3?(cell2, cell3) && c1_and_c3?(cell1, cell3)
+	end
+
+	def c1_and_c2?(cell1, cell2)
+		squares[cell1].value == squares[cell2].value
+	end
+
+	def c2_and_c3?(cell2, cell3)
+		squares[cell2].value == squares[cell3].value
+	end
+
+	def c1_and_c3?(cell1, cell3)
+		squares[cell1].value == squares[cell3].value
+	end
+#-------------------------------------------------
+# 							INTERFACE
+#------------------------------------------------
+	def print_board
+		puts "Where would you like to mark?"
+		puts squares[0].value+" | "+squares[1].value+" | "+squares[2].value
+		puts "----------"
+		puts squares[3].value+" | "+squares[4].value+" | "+squares[5].value
+		puts "----------"
+		puts squares[6].value+" | "+squares[7].value+" | "+squares[8].value
+	end
+
+	def move(value)
+		move = 0	
+		print_board
+		move = gets.chomp
+		case move
+			when "1"
+				square_marked_modify(-1, 1, value, 0)
+			when "2"
+				square_marked_modify(0, 1, value, 1)
+			when "3"
+				square_marked_modify(1, 1, value, 2)
+			when "4"
+				square_marked_modify(-1, 0, value, 3)
+			when "5"
+				square_marked_modify(0, 0, value, 4)
+			when "6"
+				square_marked_modify(1, 0, value, 5)
+			when "7"
+				square_marked_modify(-1, -1, value, 6)
+			when "8"
+				square_marked_modify(0, -1, value, 7)
+			when "9"
+				square_marked_modify(1, -1, value, 8)
+			else
+				puts 'Please enter a valid move'
+				move(value)
 		end
-		if total_o == 3
-			return true
-		elsif total_x == 3
-			return true
-		else
-			false
-		end
 	end
 
-	def state_o?(cell_o)
-		cell_o == 'o'
-	end
-
-	def state_x?(cell_x)
-		cell_x == 'x'
-	end
-
-	def diagonal_square?(cellx, celly)
-		cellx.abs == celly.abs
-	end
-
-	def lane1(cell)
-		cell == -1
+	def player_x
+		value = 'x'
+		move(value)
 	end
 	
-	def lane2(cell)
-		cell == 0
-	end
-	
-	def lane3(cell)
-		cell == 1
+	def player_o
+		value = 'o'
+		move(value)
 	end
 
+	def game_manager
+		game = Game.new
+		game.new_game
+		(1..4).each do 
+			puts "Player X"
+			game.player_x
+			if game.win?
+				we_have_a_winner
+			end
+			puts "Player O"
+			game.player_o
+			if game.win?
+				we_have_a_winner
+			end
+		end
+		puts "Player X"
+		game.player_x
+		game.print_board
+		if game.win?
+			we_have_a_winner
+		end
+		game.draw
+	end
 end
+
+game = Game.new
+game.game_manager
