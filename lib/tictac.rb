@@ -62,23 +62,20 @@ class Game
 	end
 
 	def test_win(cell1,cell2,cell3)
-		c1_and_c2?(cell1, cell2) && c2_and_c3?(cell2, cell3) && c1_and_c3?(cell1, cell3)
+		cell1_and_cell2?(cell1, cell2) && cell2_and_cell3?(cell2, cell3) 
 	end
 
-	def c1_and_c2?(cell1, cell2)
+	def cell1_and_cell2?(cell1, cell2)
 		squares[cell1].value == squares[cell2].value
 	end
 
-	def c2_and_c3?(cell2, cell3)
+	def cell2_and_cell3?(cell2, cell3)
 		squares[cell2].value == squares[cell3].value
 	end
 
-	def c1_and_c3?(cell1, cell3)
-		squares[cell1].value == squares[cell3].value
-	end
-#-------------------------------------------------
-# 							INTERFACE
-#------------------------------------------------
+#---------------
+# INTERFACE
+#---------------
 	def print_board
 		puts "Where would you like to mark?"
 		puts squares[0].value+" | "+squares[1].value+" | "+squares[2].value
@@ -134,11 +131,13 @@ class Game
 			puts "Player X"
 			game.player_x
 			if game.win?
+				game.print_board
 				we_have_a_winner
 			end
 			puts "Player O"
 			game.player_o
 			if game.win?
+				game.print_board
 				we_have_a_winner
 			end
 		end
@@ -146,11 +145,12 @@ class Game
 		game.player_x
 		game.print_board
 		if game.win?
+			game.print_board
 			we_have_a_winner
 		end
 		game.draw
 	end
 end
 
-game = Game.new
-game.game_manager
+#game = Game.new
+#game.game_manager

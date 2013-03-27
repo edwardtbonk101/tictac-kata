@@ -6,6 +6,7 @@ describe 'tictac' do
 		cell = Cell.new
 		cell.x.should == 0
 		cell.y.should == 0 
+		cell.value.should == 0
 	end
 
 	it 'should store the active cells into an array' do 
@@ -28,7 +29,7 @@ describe 'tictac' do
 		game.squares.count.should == 9
 	end
 
-	it 'should be able to display the value of pickable cells' do 
+	it 'should be able to call the value of pickable cells' do 
 		game = Game.new
 		game.new_game
 		game.squares[1].value.should == '2'
@@ -115,7 +116,7 @@ describe 'tictac' do
 		game.test_diagonal_win?.should == false
 	end
 
-	it "should score a game as winning if there is not 3 of the same in a row" do 
+	it "should score a game as winning if there is 3 of the same in a row" do 
 		game = Game.new
 		game.new_game
 		game.square_marked_modify(-1,1,'x',0)
